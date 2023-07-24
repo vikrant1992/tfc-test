@@ -3,11 +3,10 @@ terraform {
     organization = "gitlab-poc"
 
     workspaces {
-      name = "testing-aws-oidc"
+      name = "erie-test-vikrant-2"
     }
   }
 }
-
 terraform {
   required_providers {
     aws = {
@@ -28,5 +27,12 @@ resource "aws_s3_bucket" "b" {
   tags = {
     Name        = "My bucket"
     Environment = "Dev"
+  }
+}
+
+
+resource "null_resource" "install_dependencies" {
+  provisioner "local-exec" {
+    command = "pip install pandas"
   }
 }
