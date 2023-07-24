@@ -21,18 +21,18 @@ provider "aws" {
  
 }
 
-resource "aws_s3_bucket" "b" {
-  bucket = "my-tf-test-bucket-plplplplplp"
+# resource "aws_s3_bucket" "b" {
+#   bucket = "my-tf-test-bucket-plplplplplp"
 
-  tags = {
-    Name        = "My bucket"
-    Environment = "Dev"
-  }
-}
+#   tags = {
+#     Name        = "My bucket"
+#     Environment = "Dev"
+#   }
+# }
 
 
-resource "null_resource" "install_dependencies" {
-  provisioner "local-exec" {
-    command = "pip install pandas"
-  }
-}
+# resource "null_resource" "install_dependencies" {
+#   provisioner "local-exec" {
+#     command = "pip install pandas"
+#   }
+# }
