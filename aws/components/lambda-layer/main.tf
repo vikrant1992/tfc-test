@@ -54,3 +54,12 @@ data "archive_file" "lambda_exporter" {
   source_dir  = "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}"
   type        = "zip"
 }
+
+
+resource "aws_lambda_layer_version" "lambda_layer" {
+  filename   =  "${path.module}/lambda-files.zip"
+  layer_name = "lambda_layer_name"
+
+  compatible_runtimes = ["python3.8"]
+}
+
