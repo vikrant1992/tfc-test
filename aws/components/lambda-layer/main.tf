@@ -37,21 +37,29 @@ resource "null_resource" "lambda_exporter" {
 
 
 
-data "null_data_source" "wait_for_lambda_exporter" {
-  inputs = {
-    # This ensures that this data resource will not be evaluated until
-    # after the null_resource has been created.
-    lambda_exporter_id = "${null_resource.lambda_exporter.id}"
+# data "null_data_source" "wait_for_lambda_exporter" {
+#   inputs = {
+#     # This ensures that this data resource will not be evaluated until
+#     # after the null_resource has been created.
+#     lambda_exporter_id = "${null_resource.lambda_exporter.id}"
 
-    # This value gives us something to implicitly depend on
-    # in the archive_file below.
+#     # This value gives us something to implicitly depend on
+#     # in the archive_file below.
+#     source_dir = "${path.module}/panda-layer/"
+#   }
+# }
+
+locals {
+    lambda_exporter_id = "${null_resource.lambda_exporter.id}"
     source_dir = "${path.module}/panda-layer/"
-  }
+
 }
+
+
 
 data "archive_file" "lambda_exporter" {
   output_path = "${path.module}/lambda-files.zip"
-  source_dir  = "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}"
+  source_dir  = locals.source_dir  # "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}"
   type        = "zip"
 }
 
