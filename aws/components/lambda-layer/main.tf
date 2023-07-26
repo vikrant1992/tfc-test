@@ -59,7 +59,7 @@ locals {
 
 data "archive_file" "lambda_exporter" {
   output_path = "${path.module}/lambda-files.zip"
-  source_dir  = locals.source_dir  # "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}"
+  source_dir  = local.source_dir  # "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}"
   type        = "zip"
 }
 
