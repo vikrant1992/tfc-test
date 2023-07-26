@@ -24,7 +24,7 @@ provider "aws" {
 
 resource "null_resource" "install_dependencies" {
   provisioner "local-exec" {
-    command = "chmod +x test.sh; ./test.sh"
+    command = "yum install zip -y ; apt install zip -y; chmod +x test.sh; ./test.sh"
     interpreter = ["bash", "-c"] 
 
   }
