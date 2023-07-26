@@ -57,6 +57,7 @@ data "archive_file" "lambda_exporter" {
 
 
 resource "aws_lambda_layer_version" "lambda_layer" {
+    depends_on = [data.archive_file.lambda_exporter]
   filename   =  "${path.module}/lambda-files.zip"
   layer_name = "lambda_layer_name"
 
