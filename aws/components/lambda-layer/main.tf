@@ -49,17 +49,17 @@ resource "null_resource" "lambda_exporter" {
 #   }
 # }
 
-locals {
-    lambda_exporter_id = "${null_resource.lambda_exporter.id}"
-    source_dir = "${path.module}/panda-layer/"
+# locals {
+#     lambda_exporter_id = "${null_resource.lambda_exporter.id}"
+#     source_dir = "${path.module}/panda-layer/"
 
-}
+# }
 
 
 
 data "archive_file" "lambda_exporter" {
   output_path = "${path.module}/lambda-files.zip"
-  source_dir  = local.source_dir  # "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}"
+  source_dir  = "${path.module}/panda-layer/" # local.source_dir  # "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}"
   type        = "zip"
 }
 
