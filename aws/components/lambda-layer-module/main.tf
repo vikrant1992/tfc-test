@@ -16,7 +16,7 @@ resource "null_resource" "lambda_exporter" {
 
 
 resource "random_uuid" "layer_key" {
-  keepers {
+  keepers = {
     current_time = timestamp()
   }
 }
