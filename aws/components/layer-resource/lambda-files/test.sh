@@ -6,5 +6,3 @@ fi
 mkdir -p $DIR
 pip3 install pandas --target $DIR
 
-
-
