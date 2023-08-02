@@ -35,7 +35,7 @@ data "archive_file" "lambda_exporter" {
 # # Resource to create s3 bucket object
 resource "aws_s3_object" "lambda_package_layer" {
 
-  source = data.archive_file.lambda_exporter.*.output_path[0]
+  source = data.archive_file.lambda_exporter.output_path[0]
   bucket = "test-bucketvikrant"
   key    = "layer"
 }
