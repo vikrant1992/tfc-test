@@ -13,4 +13,14 @@ variable "TFC_AWS_RUN_ROLE_ARN" {
 }
 
 
+variable script_path {
+  type        = string
+  default     = ""
+}
+
+variable source_dir {
+  type        = string
+  default     = ""
+}
+
 

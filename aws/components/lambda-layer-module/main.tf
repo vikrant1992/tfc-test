@@ -1,14 +1,4 @@
 
-variable script_path {
-  type        = string
-  default     = ""
-}
-
-variable source_dir {
-  type        = string
-  default     = ""
-}
-
 
 
 resource "null_resource" "lambda_exporter" {
@@ -47,6 +37,9 @@ data "archive_file" "lambda_exporter" {
   output_path = "${path.module}/lambda-files.zip"
   source_dir  = "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}" #"${path.module}/panda-layer/" # local.source_dir  # 
   type        = "zip"
+  triggers = {
+    index = "${base64sha256(file("${var.script_path}"))}"
+  }
 }
 
 
