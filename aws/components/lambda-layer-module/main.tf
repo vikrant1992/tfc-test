@@ -20,9 +20,9 @@ resource "random_uuid" "layer_key" {}
 
 data "archive_file" "lambda_exporter" {
   depends_on = [null_resource.lambda_exporter]
-  
+
   output_path = "${path.module}/lambda-files.zip"
-  source_dir  = "${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}" #"${path.module}/panda-layer/" # local.source_dir  # 
+  source_dir  = "${path.module}/panda-layer/" #"${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}" #"${path.module}/panda-layer/" # local.source_dir  # 
   type        = "zip"
 
 }
