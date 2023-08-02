@@ -32,6 +32,8 @@ data "null_data_source" "wait_for_lambda_exporter" {
 # }
 
 
+resource "random_uuid" "layer_key" {}
+
 
 data "archive_file" "lambda_exporter" {
   output_path = "${path.module}/lambda-files.zip"
@@ -41,14 +43,24 @@ data "archive_file" "lambda_exporter" {
 }
 
 
+# # Resource to create s3 bucket object
+resource "aws_s3_object" "lambda_package_layer" {
+
+  source = data.archive_file.lambda_exporter.output_path[0]
+  bucket = "test-bucketvikrant"
+  key    = "layer"
+}
+
+
+
+
 resource "aws_lambda_layer_version" "lambda_layer" {
     depends_on = [data.archive_file.lambda_exporter]
   filename   =  "${path.module}/lambda-files.zip"
   layer_name = "lambda_layer_name-2"
+  s3_bucket  = "test-bucketvikrant"
+  s3_key     = "layer"
 
   compatible_runtimes = ["python3.8"]
-  triggers = {
-    index = "${base64sha256(file("${var.script_path}"))}"
-  }
 }
 
