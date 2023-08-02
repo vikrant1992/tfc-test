@@ -15,13 +15,17 @@ resource "null_resource" "lambda_exporter" {
 
 
 
-resource "random_uuid" "layer_key" {}
+resource "random_uuid" "layer_key" {
+  keepers {
+    current_time = timestamp()
+  }
+}
 
 
 data "archive_file" "lambda_exporter" {
   depends_on = [null_resource.lambda_exporter]
 
-  output_path = "${path.module}/lambda-files.zip"
+  output_path = "${path.module}/lambda-files-${random_uuid.layer_key.*.result}.zip"
   source_dir  = "${path.module}/panda-layer/" #"${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}" #"${path.module}/panda-layer/" # local.source_dir  # 
   type        = "zip"
 
