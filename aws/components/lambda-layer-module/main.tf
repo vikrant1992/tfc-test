@@ -12,9 +12,6 @@ resource "null_resource" "lambda_exporter" {
 }
 
 
-
-
-
 resource "random_uuid" "layer_key" {
   keepers = {
     current_time = timestamp()
@@ -25,7 +22,7 @@ resource "random_uuid" "layer_key" {
 data "archive_file" "lambda_exporter" {
   depends_on = [null_resource.lambda_exporter]
 
-  output_path = "${path.module}/lambda-files-${random_uuid.layer_key.*.result}.zip"
+  output_path = "${path.module}/lambda-files-${random_uuid.layer_key.result}.zip"
   source_dir  = "${path.module}/panda-layer/" #"${data.null_data_source.wait_for_lambda_exporter.outputs["source_dir"]}" #"${path.module}/panda-layer/" # local.source_dir  # 
   type        = "zip"
 
@@ -35,7 +32,7 @@ data "archive_file" "lambda_exporter" {
 # # Resource to create s3 bucket object
 resource "aws_s3_object" "lambda_package_layer" {
 
-  source = data.archive_file.lambda_exporter.output_path[0]
+  source = data.archive_file.lambda_exporter.*.output_path[0]
   bucket = "test-bucketvikrant"
   key    = "layer"
 }
