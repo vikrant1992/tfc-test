@@ -55,7 +55,7 @@ resource "aws_s3_object" "lambda_package_layer" {
 
 
 resource "aws_lambda_layer_version" "lambda_layer" {
-    depends_on = [data.archive_file.lambda_exporter]
+    depends_on = [data.archive_file.lambda_exporter, aws_s3_object.lambda_package_layer]
  # filename   =  "${path.module}/lambda-files.zip"
   layer_name = "lambda_layer_name-2"
   s3_bucket  = "test-bucketvikrant"
