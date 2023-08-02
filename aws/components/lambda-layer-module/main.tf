@@ -1,37 +1,23 @@
 
-terraform {
-  cloud {
-    organization = "gitlab-poc"
-
-    workspaces {
-      name = "lamnda-layer"
-    }
-  }
-}
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
+variable script_path {
+  type        = string
+  default     = ""
 }
 
-provider "aws" {
-  region = "us-east-1"
+variable source_dir {
+  type        = string
+  default     = ""
 }
-
-
 
 
 
 resource "null_resource" "lambda_exporter" {
   provisioner "local-exec" {
-    command = "chmod +x ${path.module}/lambda-files/test.sh; ${path.module}/lambda-files/test.sh"
+    command = "chmod +x ${var.script_path}; ${var.script_path}"
     interpreter = ["bash", "-c"] 
   }
   triggers = {
-    index = "${base64sha256(file("${path.module}/lambda-files/test.sh"))}"
+    index = "${base64sha256(file("${var.script_path}"))}"
   }
 }
 
@@ -45,7 +31,7 @@ data "null_data_source" "wait_for_lambda_exporter" {
 
     # This value gives us something to implicitly depend on
     # in the archive_file below.
-    source_dir = "${path.module}/panda-layer/"
+    source_dir = var.source_dir
   }
 }
 
@@ -67,7 +53,7 @@ data "archive_file" "lambda_exporter" {
 resource "aws_lambda_layer_version" "lambda_layer" {
     depends_on = [data.archive_file.lambda_exporter]
   filename   =  "${path.module}/lambda-files.zip"
-  layer_name = "lambda_layer_name"
+  layer_name = "lambda_layer_name-2"
 
   compatible_runtimes = ["python3.8"]
 }
