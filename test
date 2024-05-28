@@ -1,0 +1,108 @@
+Part 2
+
+
+[root@ip-10-211-2-245 ~]# cat docker-compose.yaml
+services:
+  csvserver:
+    image: "infracloudio/csvserver:latest"
+    volumes:
+      - type: bind
+        source: /root/inputFile
+        target: /csvserver/inputdata
+    env_file:
+    - /root/csvserver.env
+
+
+
+
+[root@ip-10-211-2-245 ~]# cat prom.yaml
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: csvserver_prom
+    static_configs:
+      - targets: ['csvserver:9393']
+    metrics_path: /csvserver_records
+
+
+--
+global:
+  scrape_interval: 15s
+scrape_configs:
+  - job_name: csvserver_recorder
+    static_configs:
+      - targets: ['csvserver:9393']
+    metrics_path: /csvserver_records
+[root@ip-10-211-2-245 ~]# cat docker-compose.yaml
+services:
+  csvserver:
+    image: "infracloudio/csvserver:latest"
+    volumes:
+      - type: bind
+        source: /root/inputFile
+        target: /csvserver/inputdata
+    ports:
+      - 9300:9300
+    env_file:
+    - /root/csvserver.env
+
+  prometheus:
+      image: "prom/prometheus:v2.45.2"
+      ports:
+        - 9090:9090
+      volumes:
+        - type: bind
+          source: prom.yaml
+          target: /etc/prometheus/prometheus.yml
+-----------
+part-1-cmd
+
+
+docker run -p 9393:9300 -d -e CSVSERVER_BORDER='Orange'  --mount type=bind,source=/root/inputFile,target=/csvserver/inputdata infracloudio/csvserver
+
+[root@ip-10-211-2-245 ~]# curl -o ./part-1-output http://localhost:9393/raw
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   143  100   143    0     0    831      0 --:--:-- --:--:-- --:--:--   831
+[root@ip-10-211-2-245 ~]# ls
+gencsv.sh  inputFile  part-1-output
+[root@ip-10-211-2-245 ~]# cat part-1-output
+Y3N2c2VydmVyIGdlbmVyYXRlZCBhdDogMTcxNjg5MjQyOQ==
+CSVSERVER_BORDER: Orange
+2,  17914
+3,  29683
+4,  19001
+5,  27692
+6,  22498
+7,  27047
+8,  8387
+
+[root@ip-10-211-2-245 ~]# docker logs 6fe2e1d5d114 >& part-1-logs
+[root@ip-10-211-2-245 ~]# cat part-1-logs
+2024/05/28 10:33:49 listening on ****
+2024/05/28 10:34:05 wrote 554 bytes for /
+2024/05/28 10:54:54 wrote 143 bytes for /raw
+[root@ip-10-211-2-245 ~]#
+
+[root@ip-10-211-2-245 ~]# cat inputFile
+2, 17914
+3, 29683
+4, 19001
+5, 27692
+6, 22498
+7, 27047
+8, 8387
+
+
+
+root@ip-10-211-2-245 ~]# cat gencsv.sh
+#! /bin/bash
+#
+#random=$((1 + $RANDOM % 10))
+if [ ! -f inputFile ]; then
+        touch inputFile
+fi
+for ((i=$1; i<=$2; i++ ))
+do
+        echo -e "$i, $RANDOM" >> inputFile
+done
